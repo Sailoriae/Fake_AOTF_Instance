@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+
+
+<html lang="fr">
+<head>
+	<meta charset=utf-8>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta name="robots" content="noindex" />
+
+	<title>Documentation de Artists on Twitter Finder</title>
+
+	<link href="stylesheet.css" rel="stylesheet">
+</head>
+
+
+<body>
+	<header>
+		<h1>Artists on Twitter Finder<br>Documentation</h1>
+		<p><a href="./">Retour au moteur de recherche</a></p>
+	</header>
+
+	<main class="text-align-left">
+		<h2>Notes et avertissements</h2>
+
+		<p>Le paramètre d'entrée à l'endpoint <code>/api/query</code> est une URL. Cette URL doit mener à une page web, présentant une illustration, sur l'un des sites supportés. Un site supporté est donc un site d'entrée. Twitter n'est pas un site supporté, c'est le site d'arrivé. Voir les exemples ci-dessous.</p>
+
+		<p>La liste des sites supportés est disponible <a href="./">sur la page d'accueil</a>.</p>
+
+		<p>L'accès à tout moment au serveur n'est pas garanti, il peut être indisponible.<p>
+
+		<p>Même si nous faisons de notre mieux, aucun résultat n'est granti comme juste :</p>
+		<ul>
+			<li>Le ou les comptes Twitter trouvé(s) peuvent ne pas être ceux de ou des artiste(s) de l'illustration entrée.</li>
+			<li>Certains ou tous les comptes Twitter de ou des artiste(s) peuvent ne pas être trouvés.</li>
+			<li>L'intégralité des Tweets des comptes trouvés peuvent ne pas être indexés, notamment pour les comptes ayant publié plus de 3 200 Tweets.</li>
+			<li>La recherche par image peut se tromper.</li>
+		</ul>
+		<p>Les problèmes listés ci-dessus ne sont pas détectables de manière automatique.</p>
+
+		<p>L'API vous limite à 1 requête HTTP par seconde (Uniquement pour les endpoints <code>/api/query</code>). Sinon, vous recevrez une erreur HTTP 429.</p>
+
+
+		<h2>Endpoint <code>POST /api/query</code> (Recommandé)</h2>
+
+		<p>Lancer le traitement d'une illustration et recevoir son statut.</p>
+
+		<p>Le contenu doit être uniquement l'URL de la page web de l'un des sites supportés contenant l'illustration (Type <code>text/plain</code> encodé en UTF-8).</p>
+
+		<p>Exemples de contenu&nbsp;:</p>
+		<ul>
+			<li><code>https://www.deviantart.com/raemz-desu/art/Miku-498506170</code></li>
+			<li><code>https://danbooru.donmai.us/posts/2790874</code></li>
+			<li><code>https://www.pixiv.net/en/artworks/78119407</code></li>
+		</ul>
+
+		<p>Retourne un JSON décrit ci-dessous.</p>
+
+		<p>Cas particulier&nbsp;: Pixiv donne la possibilité aux artistes de publier plusieurs illustrations sur une même page web. Vous pouvez préciser quelle illustration vous voulez rechercher en ajoutant <code>#POSITION</code> au bout de l'URL, avec <code>POSITION</code> un nombre entier entre 1 et 200 (La numérotation commence à 1). Exemple&nbsp;:</p>
+
+		<ul>
+			<li><code>https://www.pixiv.net/en/artworks/92512929#44</code></li>
+		</ul>
+
+		<p>Si aucune précision n'est donnée, ou qu'elle est impossible, AOTF recherchera par défaut la première image (<code>POSITION</code> à <code>1</code>).</p>
+
+
+		<h2>Endpoint <code>GET <a href="./api/query">/api/query</a></code> (Non-recommandé)</h2>
+
+		<p>Même fonctionnement précedemment, mais l'URL de la page web contenant l'illustration est passée en paramètre.</p>
+
+		<p>Paramètres&nbsp;:</p>
+		<ul>
+			<li><code>url</code><br>L'URL de la page web de l'un des sites supportés contenant l'illustration.</li>
+		</ul>
+
+		<p>Exemples&nbsp;:</p>
+		<ul>
+			<li><a href="./api/query?url=https://www.deviantart.com/raemz-desu/art/Miku-498506170">/api/query?url=https://www.deviantart.com/raemz-desu/art/Miku-498506170</a></li>
+			<li><a href="./api/query?url=https://danbooru.donmai.us/posts/2790874">/api/query?url=https://danbooru.donmai.us/posts/2790874</a></li>
+			<li><a href="./api/query?url=https://www.pixiv.net/en/artworks/78119407">/api/query?url=https://www.pixiv.net/en/artworks/78119407</a></li>
+			<li><a href="./api/query?url=https://www.pixiv.net/en/artworks/92512929%2344">/api/query?url=https://www.pixiv.net/en/artworks/92512929#44</a></li>
+		</ul>
+
+		<p>Retourne un JSON décrit ci-dessous.</p>
+
+
+		<h2>JSON retourné par <code>/api/query</code></h2>
+
+		<p>Le JSON retourné par <code>/api/query</code> contient forcément les champs suivants&nbsp;:</p>
+		<ul>
+			<li><code>status</code><br>Une chaine de caractères décrivant l'état actuel de la requête. Voir la liste des statuts possibles ci-dessous. Peut être à <code>null</code> si la requête n'a pas pu être lancée.</li>
+			<li><code>has_first_time_scan</code><br>Un booléen mis à <code>true</code> si un des compte Twitter trouvé n'est pas indexé. Le traitement va donc être plus long.</li>
+			<li><code>twitter_accounts</code><br>Liste de comptes Twitter trouvés et validés (C'est à dire qu'ils sont existants, publiques, et non suspendus ou désactivés). Peut être une liste vide. Chaque compte Twitter contient les champs suivants&nbsp;:
+				<ul>
+					<li><code>account_name</code><br>Le "screen name" du compte Twitter.</li>
+					<li><code>account_id</code><br>L'ID du compte Twitter.</li>
+				</ul>
+			</li>
+			<li><code>results</code><br>Liste des Tweets trouvés, triée par le nombre de bits de différence avec l'empreinte de l'image de requête, puis si égalité par le nombre d'images dans le Tweet, puis si encore égalité par l'ID du Tweet. Peut être une liste vide. Chaque Tweet contient les champs suivants&nbsp;:
+				<ul>
+					<li><code>tweet_id</code><br>L'ID du Tweet.</li>
+					<li><code>account_id</code><br>L'ID du compte Twitter ayant publié ce Tweet.</li>
+					<li><code>image_position</code><br>Une chaine contenant la position de l'image parmis les 4 images maximums, ainsi que le nombre d'images dans le Tweet. Cette chaine est au format suivant&nbsp;: <code>position/nombre</code>, <code>1/4</code> par exemple.</li>
+					<li><code>distance</code><br>Le nombre de bits de différence entre l'empreinte de l'image de requête et celle de l'image trouvée. Plus elle est faible, plus l'image de requête est proche de l'image trouvée.</li>
+				</ul>
+			</li>
+			<li><code>error</code><br>Une chaine de caractères décrivant l'erreur si jamais la requête a été interrompue, ou qu'elle n'a pas pu être lancée. Est par défaut à <code>null</code> si aucun problème n'est à signaler. Voir la liste des erreurs possibles ci-dessous.</li>
+		</ul>
+
+		<p>Liste des statuts possibles&nbsp;:</p>
+		<ul>
+			<li><code>WAIT_LINK_FINDER</code><br>En attente de traitement par un thread de recherche des comptes Twitter de l'artiste.</li>
+			<li><code>LINK_FINDER</code><br>En cours de traitement par un thread de recherche des comptes Twitter de l'artiste.</li>
+			<li><code>WAIT_INDEX_ACCOUNTS_TWEETS</code><br>En attente de traitement par un thread de lancement de l'indexation ou de la mise à jour de l'indexation des Tweets des comptes Twitter de l'artiste.</li>
+			<li><code>INDEX_ACCOUNTS_TWEETS</code><br>En cours de traitement par les threads d'indexation des Tweets des comptes Twitter de l'artiste.
+				<ul>
+					<li>Si le champs <code>has_first_time_scan</code> est à <code>false</code>, c'est seulement pour une mise à jour des comptes, car l'illustration est trop récente.</li>
+					<li>Sinon, c'est qu'il y a un ou plusieurs comptes qui étaient inconnus dans la base de données. Cette étape va donc être longue.</li>
+				</ul>
+			<li><code>WAIT_IMAGE_REVERSE_SEARCH</code><br>En attente de traitement par un thread de recherche d'image inversée.</li>
+			<li><code>IMAGE_REVERSE_SEARCH</code><br>En cours de traitement par un thread de recherche d'image inversée.</li>
+			<li><code>END</code><br>Fin de traitement.</li>
+		</ul>
+
+		<p>Liste des erreurs possibles&nbsp;:</p>
+		<ul>
+			<li><code>NO_URL_FIELD</code><br>Si la méthode HTTP est <code>GET</code>, il n'y a pas de paramètre / argument <code>url</code> dans l'URL de requête. Si la méthode HTTP est <code>POST</code>, il n'y a pas de contenu dans la requête.</li>
+			<li><code>URL_TOO_LONG</code><br>La chaine entrée comme URL d'une illustration est trop longue.</li>
+			<li><code>NOT_AN_URL</code><br>La chaine entrée comme URL d'une illustration n'est pas un URL valide.</li>
+			<li><code>UNSUPPORTED_WEBSITE</code><br>Le site l'URL entrée n'est pas supporté, ou l'URL est invalide.</li>
+			<li><code>NOT_AN_ARTWORK_PAGE</code><br>Le site est supporté, mais l'URL entrée ne mène pas à une illustration.</li>
+			<li><code>NO_TWITTER_ACCOUNT_FOUND</code><br>Aucun compte Twitter trouvé pour l'artiste de l'illustration.</li>
+			<li><code>NO_VALID_TWITTER_ACCOUNT_FOUND</code><br>Des comptes Twitter ont étés trouvés, mais ils sont invalides (Ils peuvent être inexistants, privés, suspendus, désactivés ou sur la liste noire d'AOTF).</li>
+			<li><code>BLOCKED_BY_TWITTER_ACCOUNT</code><br>Un des comptes Twitter à indexer bloque tous les comptes de scan du serveur. Il est donc impossible d'indexer ce compte.</li>
+			<li><code>ERROR_DURING_REVERSE_SEARCH</code><br>Erreur durant la recherche d'image inversée. Est-ce que l'illustration n'a pas un format à la noix ? Par exemple GIF animé ?</li>
+			<li><code>QUERY_IMAGE_TOO_BIG</code><br>L'illustration de requête est trop grande pour être traitée.</li>
+			<li><code>PROCESSING_ERROR</code><br>Un thread de traitement a planté durant son traitement de cette requête. Il est donc impossible de terminer cette requête !</li>
+			<li><code>YOUR_IP_HAS_MAX_PROCESSING_REQUESTS</code><br>L'adresse IP qui a envoyé la requête a atteint son quota maximum de requêtes en cours de traitement. Il faut donc attendre que les autres requêtes envoyées par cette adresse IP finissent leur traitement.</li>
+		</ul>
+
+
+		<h2>Endpoint <code>GET <a href="./api/stats">/api/stats</a></code></h2>
+
+		<p>Recevoir des statistiques sur le serveur.</p>
+
+		<p>Retourne un JSON contenant les champs suivants&nbsp;:</p>
+		<ul>
+			<li><code>indexed_tweets_count</code><br>Nombre de Tweets indexés.</li>
+			<li><code>indexed_accounts_count</code><br>Nombre de comptes Twitter indexés.</li>
+			<li><code>processing_user_requests_count</code><br>Nombre de requêtes en cours de traitement. Plus cette valeur est élevée, plus votre requête va prendre du temps à être traitée.</li>
+			<li><code>processing_scan_requests_count</code><br>Nombre d'indexations ou de mise à jour d'indexation de comptes Twitter en cours. Plus cette valeur est élevée, plus votre requête risque de prendre du temps à être traitée.</li>
+			<li><code>pending_tweets_count</code><br>Nombre de Tweets en attente d'indexation. Plus cette valeur est élevée, plus votre requête risque de prendre du temps à être traitée.</li>
+		</ul>
+
+
+		<h2>Endpoint <code>GET <a href="./api/config">/api/config</a></code></h2>
+
+		<p>Recevoir des informations sur le serveur.</p>
+
+		<p>Retourne un JSON contenant les champs suivants&nbsp;:</p>
+		<ul>
+			<li><code>limit_per_ip_address</code><br>Nombre maximale de requêtes en cours de traitement par adresse IP.</li>
+			<li><code>ip_can_bypass_limit</code><br>Booléen indiquant si votre adresse IP peut dépasser la limite précédente.</li>
+			<li><code>update_accounts_frequency</code><br>Fréquence de la mise à jour automatique des comptes Twitter indexés, en jours. Un compte peut aussi être mis à jour lors d'une requête si l'illustration est trop récente.</li>
+			<li><code>max_illust_url_size</code><br>Longueur maximale de l'URL d'une illustration pour l'entrée de l'endpoint <code>/api/query</code>.</li>
+		</ul>
+	</main>
+
+	<footer>
+		<p>Fait avec ❤️ sur l'île d'Oléron.</p>
+	</footer>
+</body>
+
+
+</html>

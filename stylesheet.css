@@ -1,0 +1,97 @@
+body {
+	padding: 10px;
+	margin: 0;
+	min-width: 300px;
+	font: 100% sans-serif;
+	text-align: center;
+}
+
+header, footer, main {
+	max-width: 600px;
+	margin: auto;
+}
+
+.text-align-left {
+	text-align: left;
+}
+
+header {
+	border-bottom: solid grey 1px;
+}
+
+footer {
+	border-top: solid grey 1px;
+}
+
+label, input {
+	display: block;
+	margin: 10px auto;
+}
+
+input {
+	padding: 10px;
+}
+
+input#illust-url,
+input#image-file,
+input#account-name {
+	width: 90%;
+	max-width: 500px;
+}
+
+div.twitter-tweet {
+	margin: auto;
+	max-width: 551px !important; /* A retirer si Twitter réparent leur widget */
+}
+
+code {
+	font-size: 140%;
+}
+
+a {
+	transition: 0.2s ease-in-out;
+}
+
+.display-none {
+	display: none;
+}
+
+/* Pour les <a> sans "href" */
+a {
+	text-decoration: underline;
+}
+a:hover {
+	cursor:pointer;
+}
+
+@media (prefers-color-scheme: light) {
+	body, input {
+		background-color: #fff;
+		color: #000;
+	}
+	a {
+		color: #00f;
+	}
+	a:hover {
+		color: #f00;
+	}
+	input {
+		background-color: #f4f4f4;
+	}
+}
+
+@media (prefers-color-scheme: dark) {
+	body, input {
+		background-color: #1c1c1e;
+		color: #fefefe;
+	}
+	a {
+		color: #5fa9ee;
+	}
+	a:hover {
+		color: #f00;
+	}
+	input {
+		background-color: #000;
+	}
+}
