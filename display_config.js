@@ -27,6 +27,6 @@ function displayConfig() {
 		}
 	});
 
-	request.open("GET", baseURL + "/config"); // self.send_header("Access-Control-Allow-Origin", "*")
+	request.open("GET", baseURL + "/config.json"); // self.send_header("Access-Control-Allow-Origin", "*")
 	request.send();
 }

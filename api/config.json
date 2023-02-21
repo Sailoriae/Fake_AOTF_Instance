@@ -1,0 +1,7 @@
+{
+	"limit_per_ip_address": 5,
+	"ip_can_bypass_limit": false,
+	"ip_can_use_advanced": false,
+	"update_accounts_frequency": 90,
+	"max_illust_url_size": 256
+}

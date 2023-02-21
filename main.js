@@ -58,37 +58,37 @@ function mainFunction ( new_loop = true, isDirectRequest = false, identifier = n
 				return;
 			}
 			if ( accountName )
-				request.open("POST", baseURL + "/search?account_name=" + accountName);
+				request.open("GET", baseURL + "/search.json?account_name=" + accountName);
 			else
-				request.open("POST", baseURL + "/search");
-			request.setRequestHeader("Content-type", imageFile[0].type);
-			request.send( imageFile[0] );
+				request.open("GET", baseURL + "/search.json");
+//			request.setRequestHeader("Content-type", imageFile[0].type);
+			request.send();
 		} else {
-			request.open("GET", baseURL + "/search?identifier=" + identifier);
+			request.open("GET", baseURL + "/search.json?identifier=" + identifier);
 			request.send();
 		}
 	} else { // Recherche classique
-		request.open("POST", baseURL + "/query");
-		request.setRequestHeader("Content-type", "text/plain");
-		request.send( illustURL );
+		request.open("GET", baseURL + "/query.json");
+//		request.setRequestHeader("Content-type", "text/plain");
+		request.send();
 	}
 }
 
 function lockUI () {
 	document.getElementById("launch-default").style.display = "none";
 	document.getElementById("launch-direct").style.display = "none";
-	document.getElementById("illust-url").readOnly = true;
-	document.getElementById("image-file").readOnly = true;
-	document.getElementById("account-name").readOnly = true;
+//	document.getElementById("illust-url").readOnly = true;
+//	document.getElementById("image-file").readOnly = true;
+//	document.getElementById("account-name").readOnly = true;
 	document.getElementById("loader").style.display = "inline-block";
 }
 
 function unlockUI () {
 	document.getElementById("launch-default").style.display = "block";
 	document.getElementById("launch-direct").style.display = "block";
-	document.getElementById("illust-url").readOnly = false;
-	document.getElementById("image-file").readOnly = false;
-	document.getElementById("account-name").readOnly = false;
+//	document.getElementById("illust-url").readOnly = false;
+//	document.getElementById("image-file").readOnly = false;
+//	document.getElementById("account-name").readOnly = false;
 	document.getElementById("loader").style.display = "none";
 }
 

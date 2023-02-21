@@ -1,0 +1,19 @@
+{
+	"status" : "END",
+	"has_first_time_scan" : true,
+	"twitter_accounts" : [
+		{
+			"account_name" : "namygaga1",
+			"account_id" : "463350392"
+		}
+	],
+	"results" : [
+		{
+			"tweet_id" : "1308936473555742721",
+			"account_id" : "463350392",
+			"image_position" : "1/1",
+			"distance" : 0
+		}
+	],
+	"error" : null
+}
